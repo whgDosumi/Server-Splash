@@ -20,13 +20,14 @@
     word-wrap: break-word;
     line-height: .9;
     text-align: center;
+    margin-bottom: 4px;
 }
 
 .button img {
     width: 150px;
     height: 150px;
     margin-right: 10px;
-    
+
     /* Add space between the image and text */
 }
 
@@ -57,4 +58,3 @@
     transform: scale(1.8);
     transform-origin: bottom left;
 }
-
