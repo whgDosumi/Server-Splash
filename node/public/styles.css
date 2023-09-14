@@ -24,9 +24,11 @@
 }
 
 .button img {
-    width: 150px;
-    height: 150px;
-    margin-right: 10px;
+    width: 144px;
+    height: 144px;
+    margin: 6px;
+    margin-left: 3px;
+    border-radius: 10px;
 
     /* Add space between the image and text */
 }
@@ -42,19 +44,76 @@
 }
 
 .edit_form {
-    padding: 12px;
+    padding: 0px;
     color: white;
     background-color: darkslategray;
-    text-align: left;
-    text-decoration: none;
-    font-size: 45px;
+    font-size: 20px;
     font-family: "Century Gothic W05 Regular", sans-serif;
     border-radius: 10px;
-    display: inline-block;
-    padding-right: 150px;
+    max-width: 350px;
+    margin: auto;
+    margin-top: 100px;
+    transform: scale(2);
+}
+
+.edit_form p {
+    text-align: left;
+    font-size: 20px;
+    margin: 0;
+    padding-bottom: 10px;
+}
+
+.edit_form span {
+    text-align: left;
+    background-color: rgb(35, 59, 59);
+    border-top-left-radius: 10px;
 }
 
 .edit_form input {
-    transform: scale(1.8);
+    height: 20px;
+    display: block;
     transform-origin: bottom left;
+    margin-left: 5px;
+    margin-bottom: 5px;
+}
+
+.edit_form label {
+    margin-left: 5px;
+    float: left;
+}
+
+#buttonText {
+    float: left;
+}
+
+#text_color {
+    height: 26px;
+}
+
+#buttonColor {
+    margin-top: 8px;
+    height: 26px;
+}
+
+#imageUpload {
+    max-width: 250px;
+}
+
+#submitButton {
+    font-size: 15px;
+    text-align: center;
+    padding: 5px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    cursor: pointer;
+}
+
+#link {
+    width: 95%;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
