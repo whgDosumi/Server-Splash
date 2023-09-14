@@ -31,6 +31,9 @@ app.post("/add_button", upload.single("image"), (req, res) => {
     const link = req.body.link;
     const ext = "." + req.file.originalname.split('.').pop();
     const image_path = req.file.path;
+    if (!fs.existsSync(path.join(__dirname, "/public/images/"))) {
+        fs.mkdirSync(path.join(__dirname, "/public/images/"));
+    }
     const destination = path.join(__dirname, "/public/images/") + slugify(text) + ext;
     fs.rename(image_path, destination, async (err) => {
         if (err) {
