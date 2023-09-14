@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Splash Page</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body style="background-color:#202020;">
+    <h1 class="wrapper" style="color:rgb(176, 183, 201)">Server Title</h1>
+    <div class="wrapper">
+        <div id="add_button_form" class="edit_form">
+            <form id="create_button">
+                <label for="buttonText">Button Text:</label>
+                <input type="text" id="buttonText" name="text" required><br>
+
+                <label for="buttonColor">Background Color:</label>
+                <input type="color" id="buttonColor" name="color" value="#1ef0d4" required><br>
+
+                <label for="imageURL">Image:</label>
+                <input type="file" id="imageUpload" name="image" accept="image/*" required><br>
+
+                <label for="link">Link Destination:</label>
+                <input type="url" id="link" name="link" required><br>
+
+                <input type="submit" id="submitButton" value="Create Button">
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById("create_button").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const form_data = new FormData(event.target);
+            form_data.forEach((value, key) => {
+                console.log(`${key}: ${value}`);
+            })
+            fetch("/add_button", {
+                method: "POST",
+                body: form_data,
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.alert("Button added")
+                    window.location.href = "/";
+                } else {
+                    window.alert("Something went wrong.");
+                }
+            })
+        })
+        function renderButton(data) {
+            return `
+            <a class="button" href="${data.link}">
+            <div class="button" style="width:500px; height:150px; background-color:${data.backgroundColor};">
+              <img src="${data.imageSrc}" alt="Button Image" width="150px" height="150px">
+              <span>${data.text}</span>
+            </div>
+            </a>
+            `;
+        }
+        const buttonContainer = document.getElementById("button_container");
+        for (const button of buttons) {
+            const buttonHTML = renderButton(button);
+            const buttonElement = document.createElement("div");
+            buttonElement.innerHTML = buttonHTML;
+            buttonContainer.appendChild(buttonElement);
+        }
+    </script>
+</body>

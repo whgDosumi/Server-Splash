@@ -1,0 +1,60 @@
+@import url(https://db.onlinewebfonts.com/c/9027abcf80a0095c71d4ebc4aa4de4b1?family=Century+Gothic+W05+Regular);
+
+.button {
+    width: 500px;
+    height: 150px;
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    text-align: center;
+    text-decoration: none;
+    font-size: 45px;
+    margin: auto;
+    cursor: pointer;
+    font-family: "Century Gothic W05 Regular", sans-serif;
+    font-style: normal;
+    border-radius: 10px;
+    white-space: normal;
+    word-wrap: break-word;
+    line-height: .9;
+    text-align: center;
+}
+
+.button img {
+    width: 150px;
+    height: 150px;
+    margin-right: 10px;
+    
+    /* Add space between the image and text */
+}
+
+.button span {
+    margin-left: 5px;
+    max-height: 150px;
+    max-width: 334px;
+}
+
+.wrapper {
+    text-align: center;
+}
+
+.edit_form {
+    padding: 12px;
+    color: white;
+    background-color: darkslategray;
+    text-align: left;
+    text-decoration: none;
+    font-size: 45px;
+    font-family: "Century Gothic W05 Regular", sans-serif;
+    border-radius: 10px;
+    display: inline-block;
+    padding-right: 150px;
+}
+
+.edit_form input {
+    transform: scale(1.8);
+    transform-origin: bottom left;
+}
+
