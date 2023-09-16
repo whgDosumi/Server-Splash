@@ -13,15 +13,28 @@ function slugify(text) {
 
 // Define the button
 class Button {
-    constructor(text, backgroundColor, imageSrc, link) {
+    render() {
+        return `
+            <a class="button" href="${this.link}">
+            <div class="button" style="width:500px; height:150px; background-color:${this.backgroundColor};">
+              <img src="${this.imageSrc}" alt="Button Image" width="150px" height="150px">
+              <span style="color: ${this.text_color};">${this.text}</span>
+            </div>
+            </a>
+            `;
+    }
+
+    constructor(text, backgroundColor, imageSrc, link, textcolor) {
         this.width = "500px";
         this.height = "150px";
         this.backgroundColor = backgroundColor;
         this.text = text;
+        this.text_color = textcolor;
         this.imageSrc = imageSrc;
         this.imageWidth = "150px";
         this.imageHeight = "150px";
         this.link = link;
+        this.rendered = this.render();
     }
 
     // save the button to disk.
@@ -35,6 +48,7 @@ class Button {
                 backgroundColor: this.backgroundColor,
                 imageSrc: this.imageSrc,
                 link: this.link,
+                text_color: this.text_color,
             };
             await write_promise(file_path, JSON.stringify(button_data));
             console.log(`Button data saved as ${slug}.json`);
@@ -58,7 +72,8 @@ function load_buttons() {
                     buttonData.text,
                     buttonData.backgroundColor,
                     buttonData.imageSrc,
-                    buttonData.link
+                    buttonData.link,
+                    buttonData.text_color
                 );
                 buttons.push(button);
             }

@@ -25,11 +25,11 @@ function slugify(text) {
 if (!fs.existsSync(path.join(__dirname, "/buttons"))) {
     fs.mkdirSync(path.join(__dirname, "/buttons"));
 }
-// Read in the buttons
-let buttons = load_buttons();
 
 // Handle GET requests
 app.get("/", (req, res) => {
+    // Load and pass the buttons to the webpage.
+    let buttons = load_buttons();
     res.render("index", { buttons });
 });
 app.get("/edit", (req, res) => {
@@ -41,6 +41,7 @@ app.post("/add_button", upload.single("image"), (req, res) => {
     let text = req.body.text;
     let color = req.body.color;
     let link = req.body.link;
+    let text_color = req.body.textcolor;
     let ext = "." + req.file.originalname.split('.').pop();
     let image_path = req.file.path;
     if (!fs.existsSync(path.join(__dirname, "/public/images/"))) {
@@ -54,7 +55,7 @@ app.post("/add_button", upload.single("image"), (req, res) => {
         } else {
             console.log('Image saved successfully');
             res.send('Image uploaded and saved successfully');
-            new_button = new Button(text, color, path.join("/images/" + slugify(text) + ext), link);
+            new_button = new Button(text, color, path.join("/images/" + slugify(text) + ext), link, text_color);
             await new_button.save();
             buttons = load_buttons();
         }
@@ -62,6 +63,6 @@ app.post("/add_button", upload.single("image"), (req, res) => {
 })
 
 // Start the webserver on port 3000
-app.listen(3000, () => {
-    console.log("listening on port 3000")
+app.listen(3001, () => {
+    console.log("listening on port 3001")
 })
