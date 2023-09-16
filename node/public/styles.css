@@ -117,3 +117,21 @@
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
+
+
+#preview_text {
+    transform: translateX(-200px);
+    margin: 0;
+    padding: 0;
+    color: azure;
+    font-size: 40px;
+    font-family: "Century Gothic W05 Regular", sans-serif;
+    margin-bottom: 30px;
+}
+#preview_box {
+    text-align: center;
+    margin: auto;
+    max-width: 700px;
+    border-style:groove;
+}

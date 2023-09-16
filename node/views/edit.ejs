@@ -11,15 +11,63 @@
     <form id="create_button" class="edit_form">
         <p><span>&nbsp;Add Button&nbsp;</span></p>
         <input type="text" id="buttonText" name="text" placeholder="Button Text" required>
-        <input type="color" id="text_color" name="textcolor" value="#ffffff" required>
+        <input type="color" id="text_color" name="textcolor" value="#F0FFFF" required>
         <label for="buttonColor">Button Color:&nbsp;</label>
-        <input type="color" id="buttonColor" name="color" value="#1ef0d4" required>
+        <input type="color" id="buttonColor" name="color" value="#2F4F4F" required>
         <label for="imageUpload">Image:&nbsp;</label>
         <input type="file" id="imageUpload" name="image" accept="image/*" required>
         <input type="url" id="link" name="link" placeholder="Destination URL" required>
         <input type="submit" id="submitButton" value="Create Button">
     </form>
+    <br><br><br><br><br><br>
+    <div id="preview_box">
+        <h1 id="preview_text"><span id="prevTextSpan">Button Preview:</span></h1>
+        <div class="wrapper" id="button_container"></div> 
+    </div>
     <script>
+        let image_preview = "/images/error9845619841589811.png";
+        
+        function render_button() {
+            // Get values from form
+            button_text = document.getElementById("buttonText").value;
+            button_color = document.getElementById("buttonColor").value;
+            button_url = document.getElementById("link").value;
+            font_color = document.getElementById("text_color").value;
+            button_html = `
+                <a class="button" href="${button_url}">
+                    <div class="button" style="width:500px; height:150px; background-color:${button_color};">
+                        <img src="${image_preview}" alt="Button Image" width="150px" height="150px">
+                        <span style="color: ${font_color};">${button_text}</span>
+                    </div>
+                </a>
+            `
+            const buttonContainer = document.getElementById("button_container");
+            buttonContainer.innerHTML = button_html;
+        }
+        render_button()
+
+        // When an image is selected, update our image_preview so the button can show the selected pic. 
+        document.getElementById("imageUpload").addEventListener('change', (event) => {
+                let selected_file = event.target.files[0];
+                if (selected_file) {
+                    let reader = new FileReader();
+                    reader.onload = (e) => {
+                        image_preview = e.target.result;
+                        render_button();
+                    }
+                    reader.readAsDataURL(selected_file);
+                } else {
+                    image_preview = "/images/error9845619841589811.png";
+                }
+                render_button();
+            })
+        // Render the button ever time something changes.
+        document.getElementById("link").addEventListener("input", render_button);
+        document.getElementById("buttonText").addEventListener("input", render_button);
+        document.getElementById("text_color").addEventListener("input", render_button);
+        document.getElementById("buttonColor").addEventListener("input", render_button);
+
+        // Submit a POST request asking the server to add our custom button
         document.getElementById("create_button").addEventListener("submit", function (event) {
             event.preventDefault();
             const form_data = new FormData(event.target);
