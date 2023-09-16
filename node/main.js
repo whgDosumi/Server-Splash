@@ -63,6 +63,6 @@ app.post("/add_button", upload.single("image"), (req, res) => {
 })
 
 // Start the webserver on port 3000
-app.listen(3001, () => {
-    console.log("listening on port 3001")
+app.listen(3000, () => {
+    console.log("listening on port 3000")
 })
