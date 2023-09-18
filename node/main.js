@@ -69,8 +69,14 @@ app.post("/add_button", upload.single("image"), (req, res) => {
             await new_button.save();
             buttons = load_buttons();
         }
+        fs.rm(image_path, async (err) => {
+            if (err) {
+                console.error('Error deleting image:', err);
+            } else {
+                console.log("Image deleted successfully");
+            }
+        });
     })
-    fs.rm(image_path);
 })
 
 // Start the webserver on port 3000
