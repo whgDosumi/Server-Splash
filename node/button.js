@@ -1,6 +1,7 @@
 const path = require("path");
 const fs = require('fs');
 const util = require('util');
+const fsPromises = require('fs').promises;
 
 // Function to make text into a 'slug' that's safe for filesystem.
 function slugify(text) {
@@ -40,9 +41,8 @@ class Button {
     // save the button to disk.
     async save() {
         try {
-            let write_promise = util.promisify(fs.writeFile);
             let slug = slugify(this.text);
-            let file_path = path.join(__dirname, 'buttons', `${slug}.json`);
+            let file_path = path.join(__dirname, "user_data", "buttons", `${slug}.json`);
             let button_data = {
                 text: this.text,
                 backgroundColor: this.backgroundColor,
@@ -50,8 +50,7 @@ class Button {
                 link: this.link,
                 text_color: this.text_color,
             };
-            await write_promise(file_path, JSON.stringify(button_data));
-            console.log(`Button data saved as ${slug}.json`);
+            await fsPromises.writeFile(file_path, JSON.stringify(button_data));
         } catch (err) {
             console.error(`Error saving button data: ${err}`);
         }
@@ -60,7 +59,7 @@ class Button {
 
 // Load buttons from disk, return a table of button objects
 function load_buttons() {
-    const buttonsDirectory = path.join(__dirname, 'buttons');
+    const buttonsDirectory = path.join(__dirname, "user_data", 'buttons');
     const buttons = [];
     try {
         const buttonFiles = fs.readdirSync(buttonsDirectory);
