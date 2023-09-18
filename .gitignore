@@ -1,0 +1,5 @@
+rebuild.sh
+spawn.sh
+teardown.sh
+node_modules
+uploads
