@@ -42,7 +42,7 @@ class Button {
         try {
             let write_promise = util.promisify(fs.writeFile);
             let slug = slugify(this.text);
-            let file_path = path.join(__dirname, 'buttons', `${slug}.json`);
+            let file_path = path.join(__dirname, "user_data", "buttons", `${slug}.json`);
             let button_data = {
                 text: this.text,
                 backgroundColor: this.backgroundColor,
@@ -60,7 +60,7 @@ class Button {
 
 // Load buttons from disk, return a table of button objects
 function load_buttons() {
-    const buttonsDirectory = path.join(__dirname, 'buttons');
+    const buttonsDirectory = path.join(__dirname, "user_data", 'buttons');
     const buttons = [];
     try {
         const buttonFiles = fs.readdirSync(buttonsDirectory);
