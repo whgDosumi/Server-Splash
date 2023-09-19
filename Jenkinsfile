@@ -14,7 +14,7 @@ pipeline {
         stage ("Build") {
             steps {
                 echo "Building Container Image"
-                sh "podman build -t splash-demo ."
+                sh "podman --storage-opt ignore_chown_errors=true build -t splash-demo ."
             }
         }
         stage ("Deploy") {
