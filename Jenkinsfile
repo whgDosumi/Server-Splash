@@ -1,5 +1,5 @@
 pipeline {
-    agent all
+    agent any
     stages {
         stage ("Clean Up") {
             echo "Stopping existing container"
@@ -31,3 +31,4 @@ pipeline {
         }
     }
 }
+
