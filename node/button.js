@@ -55,6 +55,33 @@ class Button {
             console.error(`Error saving button data: ${err}`);
         }
     }
+    async delete() {
+        try {
+            let slug = slugify(this.text);
+            let file_path = path.join(__dirname, "user_data", "buttons", `${slug}.json`);
+            const image_files = fs.readdirSync(path.join(__dirname, "user_data", "button_images"));
+            var image_path = ""
+            for (const image_file of image_files) {
+                const { name, ext } = path.parse(image_file);
+                if (name == slug) {
+                    var image_path = path.join(__dirname, "user_data", "button_images", image_file);
+                }
+            }
+            if (fs.existsSync(file_path)) {
+                fs.unlinkSync(file_path);
+                console.log(`Deleted ${file_path}`);
+                if (fs.existsSync(image_path)) {
+                    fs.unlinkSync(image_path);
+                    console.log(`Deleted ${image_path}`);
+                    return true;
+                }
+            }
+            return false;
+        } catch (err) {
+            console.log(`Error deleting button: ${err}`)
+            return false;
+        }
+    }
 }
 
 // Load buttons from disk, return a table of button objects

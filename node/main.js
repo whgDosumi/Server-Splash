@@ -5,6 +5,8 @@ const fs = require("fs");
 const { Button, load_buttons } = require("./button");
 const multer = require('multer');
 const upload = multer({ dest: path.join(__dirname, "/uploads") });
+// Specify the server port
+const server_port = 3000;
 
 // Define static content like images and stylesheets
 app.use(express.static(path.join(__dirname, "/public")));
@@ -36,17 +38,37 @@ if (!fs.existsSync(path.join(__dirname, "/user_data", "/button_images"))) {
 // Serve the button images
 app.use("/button_images", express.static(path.join(__dirname, "user_data", "button_images")));
 
+// Scan in the buttons
+let buttons = load_buttons();
+
 // Handle GET requests
 app.get("/", (req, res) => {
-    // Load and pass the buttons to the webpage.
-    let buttons = load_buttons();
     res.render("index", { buttons });
 });
 app.get("/edit", (req, res) => {
-    res.render("edit");
+    res.render("edit", { buttons });
 });
 
 // Handle POST requests
+
+app.post("/delete_button", upload.single("delete"), (req, res) => {
+    let delete_button = req.body.delete;
+    for (const button of buttons) {
+        if (button.text == delete_button) {
+            if (button.delete()) {
+                buttons = load_buttons();
+                console.log(`Button ${delete_button} deleted successfully`);
+                res.send("Button deleted successfully!")
+            } else {
+                console.error(`Something may have gone wrong with deleting ${delete_button}`);
+                res.send("Something may have gone wrong with deleting the button.")
+                buttons = load_buttons();
+            }
+
+        }
+    }
+})
+
 app.post("/add_button", upload.single("image"), (req, res) => {
     let text = req.body.text;
     let color = req.body.color;
@@ -64,22 +86,22 @@ app.post("/add_button", upload.single("image"), (req, res) => {
             res.status(500).send('Error saving image');
         } else {
             console.log('Image saved successfully');
-            res.send('Image uploaded and saved successfully');
+            res.send('Button saved successfully');
             new_button = new Button(text, color, path.join("/button_images/" + slugify(text) + ext), link, text_color);
             await new_button.save();
             buttons = load_buttons();
         }
         fs.rm(image_path, async (err) => {
             if (err) {
-                console.error('Error deleting image:', err);
+                console.error('Error deleting temp image:', err);
             } else {
-                console.log("Image deleted successfully");
+                console.log("Temp image deleted successfully");
             }
         });
     })
 })
 
-// Start the webserver on port 3000
-app.listen(3000, () => {
-    console.log("listening on port 3000")
+// Start the webserver on port
+app.listen(server_port, () => {
+    console.log(`listening on port ${server_port}`)
 })
