@@ -32,7 +32,7 @@ pipeline {
             }
         }
         stage ("Test") {
-            input(id: 'userInput', message: 'Is the build OK?', parameters: [boolean(defaultValue: false, description: 'Confirm the build is OK')])
+            input(id: 'userInput', message: 'Is the build OK? (yes/no)')
         }
     }
 }
