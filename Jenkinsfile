@@ -2,12 +2,14 @@ pipeline {
     agent any
     stages {
         stage ("Clean Up") {
-            echo "Stopping existing container"
-            sh "Podman container stop splash-demo || true"
-            echo "Removing existing container"
-            sh "Podman container rm splash-demo || true"
-            echo "Removing existing image"
-            sh "Podman image rm splash-demo || true"
+            steps{
+                echo "Stopping existing container"
+                sh "Podman container stop splash-demo || true"
+                echo "Removing existing container"
+                sh "Podman container rm splash-demo || true"
+                echo "Removing existing image"
+                sh "Podman image rm splash-demo || true"
+            }
         }
         stage ("Build") {
             steps {
