@@ -31,6 +31,9 @@ pipeline {
                 sh "podman container start splash-demo"
             }
         }
+        stage ("Test") {
+            input(id: 'userInput', message: 'Is the build OK?', parameters: [boolean(defaultValue: false, description: 'Confirm the build is OK')])
+        }
     }
 }
 
