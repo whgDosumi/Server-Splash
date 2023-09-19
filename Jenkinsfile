@@ -4,11 +4,11 @@ pipeline {
         stage ("Clean Up") {
             steps{
                 echo "Stopping existing container"
-                sh "Podman container stop splash-demo || true"
+                sh "podman container stop splash-demo || true"
                 echo "Removing existing container"
-                sh "Podman container rm splash-demo || true"
+                sh "podman container rm splash-demo || true"
                 echo "Removing existing image"
-                sh "Podman image rm splash-demo || true"
+                sh "podman image rm splash-demo || true"
             }
         }
         stage ("Build") {
