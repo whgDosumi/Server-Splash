@@ -29,8 +29,6 @@
     margin: 6px;
     margin-left: 3px;
     border-radius: 10px;
-
-    /* Add space between the image and text */
 }
 
 .button span {
@@ -112,6 +110,19 @@
     cursor: pointer;
 }
 
+#submit_button_delete {
+    font-size: 15px;
+    text-align: center;
+    padding: 5px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    cursor: pointer;
+}
+
 #link {
     width: 95%;
     margin-top: 10px;
@@ -121,7 +132,7 @@
 
 
 #preview_text {
-    transform: translateX(-200px);
+    transform: translateX(-150px);
     margin: 0;
     padding: 0;
     color: azure;
@@ -129,9 +140,10 @@
     font-family: "Century Gothic W05 Regular", sans-serif;
     margin-bottom: 30px;
 }
+
 #preview_box {
     text-align: center;
     margin: auto;
     max-width: 700px;
-    border-style:groove;
+    border-style: groove;
 }
