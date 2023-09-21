@@ -33,7 +33,7 @@ pipeline {
         }
         stage ("Test") {
             steps {
-                input(id: 'userInput', message: 'Is the build OK? (yes/no)')
+                input(id: 'userInput', message: 'Is the build OK?')
             }
         }
     }
