@@ -33,7 +33,7 @@ pipeline {
         }
         stage ("Test") {
             steps {
-                input(id: 'userInput', message: 'Is the build okay? http://onion.lan:3001')
+                input(id: 'userInput', message: 'Is the build okay?')
             }
         }
     }
