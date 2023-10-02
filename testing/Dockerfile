@@ -4,7 +4,7 @@ FROM almalinux:latest
 RUN dnf install -y epel-release
 RUN dnf clean all
 RUN dnf -y update
-RUN dnf install -y python pip wget unzip
+RUN dnf install -y python pip wget unzip geoclue2 polkit polkit-pkla-compat
 
 # Install chrome
 RUN wget https://dl.google.com/linux/linux_signing_key.pub
@@ -12,6 +12,7 @@ RUN update-crypto-policies --set DEFAULT:SHA1
 RUN rpm --import linux_signing_key.pub
 RUN update-crypto-policies --set DEFAULT
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+RUN dnf clean all
 RUN dnf -y localinstall google-chrome-stable_current_x86_64.rpm
 
 
