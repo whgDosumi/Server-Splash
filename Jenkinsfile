@@ -3,6 +3,10 @@ pipeline {
     stages {
         stage ("Clean Up") {
             steps{
+                echo "Removing existing test containers"
+                sh "podman ps -a -q -f ancestor=splash-test | xargs podman container rm -f"
+                echo "Removing testing image"
+                sh "podman image rm splash-test"
                 echo "Stopping existing container"
                 sh "podman container stop splash-demo || true"
                 echo "Removing existing container"
@@ -33,8 +37,12 @@ pipeline {
         }
         stage ("Test") {
             steps {
-                sh "python -m pip install -r tests/requirements.txt"
-                sh "python tests/test.py"
+                sh "podman build -t splash-test ./testing/."
+                sh "podman run --network=\"host\" splash-test"
+            }
+        }
+        stage ("Verify") {
+            steps {
                 input(id: 'userInput', message: 'Is the build okay?')
             }
         }

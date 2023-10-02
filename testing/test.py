@@ -4,18 +4,16 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
-import chromedriver_autoinstaller
+from selenium.webdriver.chrome.service import Service
 import os
 import time
 
 # Get paths figured out
 script_directory = os.path.dirname(os.path.abspath(__file__))
 
-# Ensure the chrome driver is installed
-chromedriver_autoinstaller.install()
 
 # Set parameters
-test_port = 3000
+test_port = 3001
 homepage = "http://localhost:" + str(test_port)
 editpage = "http://localhost:" + str(test_port) + "/edit"
 chrome_options = Options()
@@ -24,7 +22,7 @@ chrome_options.add_argument("--headless")
 chrome_options.add_argument("--disable-dev-shm-usage")
 
 # Initialize chrome webdriver
-web = webdriver.Chrome(chrome_options)
+web = webdriver.Chrome(options=chrome_options)
 
 # Get the main pages to ensure it's up and running
 web.get(homepage)
@@ -34,7 +32,7 @@ web.get(editpage)
 tButton_text = "Test Button"
 tButton_text_color = "#9BBBBB"
 tButton_color = "#000000"
-tButton_image_path = os.path.join(os.path.dirname(script_directory), "node", "public", "images", "test_button_image.png")
+tButton_image_path = "/test/test_button_image.png"
 tButton_link = "https://google.com"
 
 #
@@ -82,4 +80,4 @@ web.get(homepage)
 # confirm the button was deleted successfully.
 assert not tButton_text in web.page_source
 
-print("hold")
+print("All automated tests have passed.")
