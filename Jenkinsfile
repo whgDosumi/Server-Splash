@@ -37,7 +37,7 @@ pipeline {
         }
         stage ("Test") {
             steps {
-                sh "podman ignore_chown_errors=true build -t splash-test ./testing/."
+                sh "podman --storage-opt ignore_chown_errors=true build -t splash-test ./testing/."
                 sh "podman run --network=\"host\" splash-test"
             }
         }
