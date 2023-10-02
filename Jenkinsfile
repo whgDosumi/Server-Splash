@@ -4,9 +4,9 @@ pipeline {
         stage ("Clean Up") {
             steps{
                 echo "Removing existing test containers"
-                sh "podman ps -a -q -f ancestor=splash-test | xargs podman container rm -f"
+                sh "podman ps -a -q -f ancestor=splash-test | xargs -I {} podman container rm -f {} || true"
                 echo "Removing testing image"
-                sh "podman image rm splash-test"
+                sh "podman image rm splash-test || true"
                 echo "Stopping existing container"
                 sh "podman container stop splash-demo || true"
                 echo "Removing existing container"
