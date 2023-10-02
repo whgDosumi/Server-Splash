@@ -3,3 +3,4 @@ spawn.sh
 teardown.sh
 node_modules
 uploads
+user_data
