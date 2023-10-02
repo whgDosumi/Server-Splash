@@ -4,6 +4,7 @@ FROM almalinux:latest
 RUN dnf install -y epel-release
 RUN dnf clean all
 RUN dnf -y update
+ENV DEBIAN_FRONTEND=noninteractive
 RUN dnf install -y python pip wget unzip geoclue2 polkit polkit-pkla-compat
 
 # Install chrome
