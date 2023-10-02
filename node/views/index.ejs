@@ -2,12 +2,12 @@
 <html>
 
 <head>
-    <title>Splash Page</title>
+    <title><%- server_title %></title>
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body style="background-color:#202020;">
-    <h1 class="wrapper" style="color:rgb(176, 183, 201)">Server Title</h1>
+    <h1 class="wrapper" style="color:rgb(176, 183, 201)"><%- server_title %></h1>
     <div class="wrapper" id="button_container">
 
     </div>
@@ -24,7 +24,7 @@
             `;
         }
         const buttonContainer = document.getElementById("button_container");
-        const buttons = <%- JSON.stringify(buttons) %>;
+        const buttons = <% - JSON.stringify(buttons) %>;
         for (const button of buttons) {
             const buttonHTML = button.rendered;
             const buttonElement = document.createElement("div");
