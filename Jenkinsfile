@@ -33,6 +33,8 @@ pipeline {
         }
         stage ("Test") {
             steps {
+                sh "python -m pip install -r tests/requirements.txt"
+                sh "python tests/test.py"
                 input(id: 'userInput', message: 'Is the build okay?')
             }
         }
