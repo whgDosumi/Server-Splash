@@ -3,7 +3,7 @@ FROM almalinux:latest
 
 RUN dnf install -y epel-release
 RUN dnf clean all
-RUN dnf update
+RUN dnf -y update
 RUN dnf install -y python pip wget unzip
 
 # Install chrome
