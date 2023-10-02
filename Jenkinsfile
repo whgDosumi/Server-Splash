@@ -3,6 +3,8 @@ pipeline {
     stages {
         stage ("Clean Up") {
             steps{
+                echo "Removing existing test containers"
+                sh "podman ps -a -q -f ancestor=splash-test | xargs -I {} podman container rm -f {} || true"
                 echo "Stopping existing container"
                 sh "podman container stop splash-demo || true"
                 echo "Removing existing container"
@@ -32,6 +34,12 @@ pipeline {
             }
         }
         stage ("Test") {
+            steps {
+                sh "podman --storage-opt ignore_chown_errors=true build -t splash-test ./testing/."
+                sh "podman run --network=\"host\" splash-test"
+            }
+        }
+        stage ("Verify") {
             steps {
                 input(id: 'userInput', message: 'Is the build okay?')
             }
