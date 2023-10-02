@@ -5,10 +5,10 @@ RUN dnf install -y epel-release
 RUN dnf clean all
 RUN dnf -y update
 ENV DEBIAN_FRONTEND=noninteractive
-RUN dnf install -y python pip wget unzip
-RUN dnf install geoclue2
-RUN dnf install polkit
-RUN dnf install polkit-pkla-compat
+RUN yum install -y python pip wget unzip
+RUN dnf install -y geoclue2
+RUN dnf install -y polkit
+RUN dnf install -y polkit-pkla-compat
 # Install chrome
 RUN wget https://dl.google.com/linux/linux_signing_key.pub
 RUN update-crypto-policies --set DEFAULT:SHA1
