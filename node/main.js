@@ -6,7 +6,7 @@ const { Button, load_buttons } = require("./button");
 const multer = require('multer');
 const upload = multer({ dest: path.join(__dirname, "/uploads") });
 // Specify the server port
-const server_port = 3002;
+const server_port = 3000;
 
 // Define static content like images and stylesheets
 app.use(express.static(path.join(__dirname, "/public")));
