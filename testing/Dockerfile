@@ -6,9 +6,6 @@ RUN dnf clean all
 RUN dnf -y update
 ENV DEBIAN_FRONTEND=noninteractive
 RUN yum install -y python pip wget unzip
-RUN dnf install -y geoclue2 2>&1
-RUN dnf install -y polkit 2>&1
-RUN dnf install -y polkit-pkla-compat 2>&1
 # Install chrome
 RUN wget https://dl.google.com/linux/linux_signing_key.pub
 RUN update-crypto-policies --set DEFAULT:SHA1
@@ -16,7 +13,7 @@ RUN rpm --import linux_signing_key.pub
 RUN update-crypto-policies --set DEFAULT
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
 RUN dnf clean all
-RUN dnf -y localinstall google-chrome-stable_current_x86_64.rpm
+RUN dnf -y localinstall google-chrome-stable_current_x86_64.rpm --skip-broken --setopt=install_weak_deps=False
 
 
 RUN mkdir /test
