@@ -4,16 +4,21 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
-from selenium.webdriver.chrome.service import Service
 import os
 import time
 
 # Get paths figured out
 script_directory = os.path.dirname(os.path.abspath(__file__))
 
-
 # Set parameters
-test_port = 3001
+if os.path.exists("/test/port_override.txt"):
+    try:
+        with open("port_override.txt", "r") as port_file:
+            test_port = int(port_file.read())
+    except:
+        test_port = 3001
+else:
+    test_port = 3001
 homepage = "http://localhost:" + str(test_port)
 editpage = "http://localhost:" + str(test_port) + "/edit"
 chrome_options = Options()
@@ -23,7 +28,6 @@ chrome_options.add_argument("--disable-dev-shm-usage")
 
 # Initialize chrome webdriver
 web = webdriver.Chrome(options=chrome_options)
-
 # Get the main pages to ensure it's up and running
 web.get(homepage)
 web.get(editpage)
@@ -79,5 +83,33 @@ alert.accept()
 web.get(homepage)
 # confirm the button was deleted successfully.
 assert not tButton_text in web.page_source
+
+###
+# Test changing the server title
+###
+
+web.get(editpage)
+# Change the server title to Jenkins Jinkies
+title_textbox = web.find_element(By.ID, "server_title_text")
+title_textbox.clear()
+title_textbox.send_keys("Jenkins Jinkies")
+web.find_element(By.ID, "submit_button_change_title").click()
+alert = WebDriverWait(web, 10).until(EC.alert_is_present())
+assert alert.text == "Title Changed!"
+alert.accept()
+# Confirm the title properly changed on the homepage
+web.get(homepage)
+assert web.title == "Jenkins Jinkies"
+body = web.find_element(By.TAG_NAME, 'body').get_attribute('innerHTML')
+assert "Jenkins Jinkies" in body
+# Change it to something appropriate
+web.get(editpage)
+title_textbox = web.find_element(By.ID, "server_title_text")
+title_textbox.clear()
+title_textbox.send_keys("Tested Title")
+web.find_element(By.ID, "submit_button_change_title").click()
+alert = WebDriverWait(web, 10).until(EC.alert_is_present())
+assert alert.text == "Title Changed!"
+alert.accept()
 
 print("All automated tests have passed.")

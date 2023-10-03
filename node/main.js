@@ -23,6 +23,14 @@ function slugify(text) {
         .slice(0, 50); // Limit to 50
 }
 
+function get_server_title() {
+    if (fs.existsSync("/var/node/user_data/title.txt")) {
+        return fs.readFileSync("/var/node/user_data/title.txt", "utf8");
+    } else {
+        return "Server Title"
+    }
+}
+let server_title = get_server_title();
 // Make sure user_data directory exists
 if (!fs.existsSync(path.join(__dirname, "/user_data"))) {
     fs.mkdirSync(path.join(__dirname, "/user_data"));
@@ -43,13 +51,25 @@ let buttons = load_buttons();
 
 // Handle GET requests
 app.get("/", (req, res) => {
-    res.render("index", { buttons });
+    res.render("index", { buttons, server_title });
 });
 app.get("/edit", (req, res) => {
-    res.render("edit", { buttons });
+    res.render("edit", { buttons, server_title });
 });
 
 // Handle POST requests
+
+app.post("/change-server-title", upload.single("title"), (req, res) => {
+    let new_title = req.body.text;
+    try {
+        fs.writeFileSync("/var/node/user_data/title.txt", new_title);
+        server_title = get_server_title();
+        res.send("Title changed successfully")
+        console.log(`Server Title updated to ${server_title}`)
+    } catch {
+        res.status(500).send('Error changing title');
+    }
+})
 
 app.post("/delete_button", upload.single("delete"), (req, res) => {
     let delete_button = req.body.delete;
@@ -58,10 +78,10 @@ app.post("/delete_button", upload.single("delete"), (req, res) => {
             if (button.delete()) {
                 buttons = load_buttons();
                 console.log(`Button ${delete_button} deleted successfully`);
-                res.send("Button deleted successfully!")
+                res.send("Button deleted successfully!");
             } else {
                 console.error(`Something may have gone wrong with deleting ${delete_button}`);
-                res.send("Something may have gone wrong with deleting the button.")
+                res.send("Something may have gone wrong with deleting the button.");
                 buttons = load_buttons();
             }
 
