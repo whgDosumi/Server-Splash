@@ -24,7 +24,7 @@
             `;
         }
         const buttonContainer = document.getElementById("button_container");
-        const buttons = <% - JSON.stringify(buttons) %>;
+        const buttons = <%- JSON.stringify(buttons) %>;
         for (const button of buttons) {
             const buttonHTML = button.rendered;
             const buttonElement = document.createElement("div");
