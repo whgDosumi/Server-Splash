@@ -101,7 +101,7 @@ alert.accept()
 # Confirm the title properly changed on the homepage
 web.get(homepage)
 assert web.title == "Jenkins Jinkies"
-body = web.find_element_by_tag_name('body').get_attribute('innerHTML')
+body = web.find_element(By.TAG_NAME, 'body').get_attribute('innerHTML')
 assert "Jenkins Jinkies" in body
 # Change it back to the original title
 web.get(editpage)
