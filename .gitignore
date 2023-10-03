@@ -4,3 +4,5 @@ teardown.sh
 node_modules
 uploads
 user_data
+testing/run.sh
+testing/port_override.txt
