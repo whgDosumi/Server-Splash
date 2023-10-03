@@ -89,7 +89,8 @@ assert not tButton_text in web.page_source
 ###
 
 web.get(editpage)
-original_title = web.title # Record original title
+original_title = str(web.title) # Record original title
+print(f"Original title: {original_title}")
 # Change the server title to Jenkins Jinkies
 title_textbox = web.find_element(By.ID, "server_title_text")
 title_textbox.clear()
