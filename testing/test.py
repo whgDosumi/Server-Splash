@@ -102,6 +102,14 @@ web.get(homepage)
 assert web.title == "Jenkins Jinkies"
 body = web.find_element(By.TAG_NAME, 'body').get_attribute('innerHTML')
 assert "Jenkins Jinkies" in body
-
+# Change it to something appropriate
+web.get(editpage)
+title_textbox = web.find_element(By.ID, "server_title_text")
+title_textbox.clear()
+title_textbox.send_keys("Tested Title")
+web.find_element(By.ID, "submit_button_change_title").click()
+alert = WebDriverWait(web, 10).until(EC.alert_is_present())
+assert alert.text == "Title Changed!"
+alert.accept()
 
 print("All automated tests have passed.")
