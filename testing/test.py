@@ -84,4 +84,35 @@ web.get(homepage)
 # confirm the button was deleted successfully.
 assert not tButton_text in web.page_source
 
+###
+# Test changing the server title
+###
+
+web.get(editpage)
+original_title = web.title # Record original title
+# Change the server title to Jenkins Jinkies
+title_textbox = web.find_element(By.ID, "server_title_text")
+title_textbox.clear()
+title_textbox.send_keys("Jenkins Jinkies")
+web.find_element(By.ID, "submit_button_change_title").click()
+alert = WebDriverWait(web, 10).until(EC.alert_is_present())
+assert alert.text == "Title Changed!"
+alert.accept()
+# Confirm the title properly changed on the homepage
+web.get(homepage)
+assert web.title == "Jenkins Jinkies"
+body = web.find_element_by_tag_name('body').get_attribute('innerHTML')
+assert "Jenkins Jinkies" in body
+# Change it back to the original title
+web.get(editpage)
+assert web.title == "Jenkins Jinkies"
+title_textbox = web.find_element(By.ID, "server_title_text")
+title_textbox.clear()
+title_textbox.send_keys(original_title)
+web.find_element(By.ID, "submit_button_change_title").click()
+alert = WebDriverWait(web, 10).until(EC.alert_is_present())
+assert alert.text == "Title Changed!"
+alert.accept()
+
+
 print("All automated tests have passed.")
