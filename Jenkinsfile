@@ -64,25 +64,25 @@ pipeline {
             }
         }
         post {
-        success {
-            script {
-                def message = "Build Successful: ${env.JOB_NAME} #${env.BUILD_NUMBER}"
-                def chatId = "222789278"
-                withCredentials([string(credentialsId: 'onion-telegram-token', variable: 'TOKEN')]) {
-                    sh "curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage -d chat_id=${chatId} -d text='${message}'"
+            success {
+                script {
+                    def message = "Build Successful: ${env.JOB_NAME} #${env.BUILD_NUMBER}"
+                    def chatId = "222789278"
+                    withCredentials([string(credentialsId: 'onion-telegram-token', variable: 'TOKEN')]) {
+                        sh "curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage -d chat_id=${chatId} -d text='${message}'"
+                    }
+                }
+            }
+            failure {
+                script {
+                    def message = "Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}"
+                    def chatId = "222789278"
+                    withCredentials([string(credentialsId: 'onion-telegram-token', variable: 'TOKEN')]) {
+                        sh "curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage -d chat_id=${chatId} -d text='${message}'"
+                    }
                 }
             }
         }
-        failure {
-            script {
-                def message = "Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}"
-                def chatId = "222789278"
-                withCredentials([string(credentialsId: 'onion-telegram-token', variable: 'TOKEN')]) {
-                    sh "curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage -d chat_id=${chatId} -d text='${message}'"
-                }
-            }
-        }
-    }
     }
 }
 
