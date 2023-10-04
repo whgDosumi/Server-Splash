@@ -7,13 +7,10 @@ pipeline {
         stage ("Initialization") {
             steps {
                 script {
-                    echo "Value of SKIP_REVIEW: ${params.SKIP_REVIEW}"
                     def skip_manual = params.SKIP_REVIEW
                     if (env.JOB_NAME.contains('PR Builder')) {
                         skip_manual = false
                     }
-                    echo "Job name: ${env.JOB_NAME}"
-                    echo "Value of skip_manual: ${skip_manual}"
                     env.skip_manual_dynamic = skip_manual
                 }
             }
