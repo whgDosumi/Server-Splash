@@ -106,7 +106,7 @@ assert "Jenkins Jinkies" in body
 web.get(editpage)
 title_textbox = web.find_element(By.ID, "server_title_text")
 title_textbox.clear()
-title_textbox.send_keys("Tested Title")
+title_textbox.send_keys("Test Title")
 web.find_element(By.ID, "submit_button_change_title").click()
 alert = WebDriverWait(web, 10).until(EC.alert_is_present())
 assert alert.text == "Title Changed!"
