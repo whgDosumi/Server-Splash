@@ -39,7 +39,12 @@ pipeline {
                 sh "podman run --network=\"host\" splash-test"
             }
         }
-        stage ("Verify") {
+        stage ("Manual Review") {
+            when {
+                expression {
+                    return env.CHANGE_ID != null
+                }
+            }
             steps {
                 input(id: 'userInput', message: 'Is the build okay?')
             }
