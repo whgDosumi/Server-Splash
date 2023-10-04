@@ -1,9 +1,21 @@
+def skip_manual_review = true
 pipeline {
     agent any
     parameters {
-        booleanParam(defaultValue: false, description: 'Skip manual review?', name: 'SKIP_REVIEW')
+        booleanParam(defaultValue: true, description: 'Skip manual review?', name: 'SKIP_REVIEW')
     }
     stages {
+        stage ("Initialization") {
+                steps {
+                    script {
+                        skip_manual_review = params.SKIP_REVIEW
+                        if (env.JOB_NAME.contains('PR Builder')) {
+                            skip_manual_review = false
+                        }
+                    }
+                }
+            }
+        }
         stage ("Clean Up") {
             steps{
                 echo "Removing existing test containers"
@@ -45,7 +57,7 @@ pipeline {
         stage ("Manual Review") {
             when {
                 expression {
-                    return !params.SKIP_REVIEW
+                    return !skip_manual_review
                 }
             }
             steps {
