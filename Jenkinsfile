@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    parameters {
+        booleanParam(defaultValue: false, description: 'Skip manual review?', name: 'SKIP_REVIEW')
+    }
     stages {
         stage ("Clean Up") {
             steps{
@@ -42,7 +45,7 @@ pipeline {
         stage ("Manual Review") {
             when {
                 expression {
-                    return env.CHANGE_ID != null
+                    return !params.SKIP_REVIEW
                 }
             }
             steps {
