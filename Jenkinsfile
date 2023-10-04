@@ -1,4 +1,3 @@
-def skip_manual_review = true
 pipeline {
     agent any
     parameters {
@@ -6,13 +5,13 @@ pipeline {
     }
     stages {
         stage ("Initialization") {
-                steps {
-                    script {
-                        skip_manual_review = params.SKIP_REVIEW
-                        if (env.JOB_NAME.contains('PR Builder')) {
-                            skip_manual_review = false
-                        }
+            steps {
+                script {
+                    def skip_manual = params.SKIP_REVIEW
+                    if (env.JOB_NAME.contains('PR Builder')) {
+                        skip_manual = false
                     }
+                    env.skip_manual_dynamic = skip_manual
                 }
             }
         }
@@ -57,7 +56,7 @@ pipeline {
         stage ("Manual Review") {
             when {
                 expression {
-                    return !skip_manual_review
+                    return env.skip_manual_dynamic == 'false'
                 }
             }
             steps {
