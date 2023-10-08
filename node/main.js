@@ -56,8 +56,38 @@ app.get("/", (req, res) => {
 app.get("/edit", (req, res) => {
     res.render("edit", { buttons, server_title });
 });
-
+app.get("/favicon", (req, res) => {
+    if (fs.existsSync(path.join(__dirname, "user_data", "favicon.ico"))) {
+        res.sendFile(path.join(__dirname, "user_data", "favicon.ico"));
+    } else {
+        res.sendFile(path.join(__dirname, "public", "default_favicon.ico"));
+    }
+})
 // Handle POST requests
+
+app.post("/upload-favicon", upload.single("favicon"), (req, res) => {
+    let image_path = req.file.path;
+    if (!fs.existsSync(path.join(__dirname, "/user_data"))) {
+        fs.mkdirSync(path.join(__dirname, "/user_data"));
+    }
+    let dest_path = path.join(__dirname, "/user_data", "favicon.ico")
+    fs.copyFile(image_path, dest_path, async (err) => {
+        if (err) {
+            console.error('Error saving image:', err);
+            res.status(500).send('Error saving image');
+        } else {
+            console.log('Favicon saved successfully');
+            res.send('Favicon saved successfully');
+        }
+        fs.rm(image_path, async (err) => {
+            if (err) {
+                console.error('Error deleting temp favicon:', err);
+            } else {
+                console.log("Temp favicon deleted successfully");
+            }
+        });
+    })
+})
 
 app.post("/change-server-title", upload.single("title"), (req, res) => {
     let new_title = req.body.text;
