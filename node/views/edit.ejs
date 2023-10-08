@@ -36,7 +36,34 @@
         <select id="delete_select" name="button_delete"></select>
         <input type="submit" id="submit_button_delete" value="Delete Button">
     </form>
+    <form id="upload_favicon" class="edit_form">
+        <p><span>&nbsp;Upload a Favicon&nbsp;</span></p>
+        <label for="favicon">Favicon:&nbsp;</label>
+        <input type="file" id="favicon" name="favicon" accept=".ico" required>
+        <input type="submit" id="submit_favicon" value="Upload Favicon">
+    </form>
+    <div>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    </div>
     <script>
+        // Make sure favicons are square images.
+        document.getElementById('favicon').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = function () {
+                        if (img.width !== img.height) {
+                            alert('Please upload a square image.');
+                            e.target.value = ''; // Clear the input
+                        }
+                    };
+                };
+                reader.readAsDataURL(file);
+            }
+        });
         let image_preview = "/images/error9845619841589811.png";
         // Add in the buttons
         const buttons = <%- JSON.stringify(buttons) %>;
@@ -88,6 +115,25 @@
         document.getElementById("text_color").addEventListener("input", render_button);
         document.getElementById("buttonColor").addEventListener("input", render_button);
 
+        document.getElementById("upload_favicon").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const form_data = new FormData(event.target);
+            form_data.forEach((value, key) => {
+                console.log(`${key}: ${value}`);
+            })
+            fetch("/upload-favicon", {
+                method: "POST",
+                body: form_data,
+            }).then(response => {
+                if (response.ok) {
+                    window.alert("Favicon Changed!")
+                    window.location.href = "/";
+                } else {
+                    window.alert("Something went wrong.");
+                }
+            })
+        })
+
         document.getElementById("server_title_form").addEventListener("submit", function (event) {
             event.preventDefault();
             const form_data = new FormData(event.target);
@@ -97,15 +143,14 @@
             fetch("/change-server-title", {
                 method: "POST",
                 body: form_data,
+            }).then(response => {
+                if (response.ok) {
+                    window.alert("Title Changed!")
+                    window.location.href = "/";
+                } else {
+                    window.alert("Something went wrong.");
+                }
             })
-                .then(response => {
-                    if (response.ok) {
-                        window.alert("Title Changed!")
-                        window.location.href = "/";
-                    } else {
-                        window.alert("Something went wrong.");
-                    }
-                })
         })
 
         document.getElementById("delete_button").addEventListener("submit", function (event) {

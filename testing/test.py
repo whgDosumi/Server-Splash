@@ -43,7 +43,8 @@ tButton_link = "https://google.com"
 # Test adding buttons
 #
 
-
+# Wait until the submitButton is present
+myElem = WebDriverWait(web, 10).until(EC.presence_of_element_located((By.ID, 'submitButton')))
 # Submit the button
 web.find_element(By.ID, "buttonText").send_keys(tButton_text)
 web.find_element(By.ID, "text_color").send_keys(tButton_text_color)
