@@ -5,9 +5,17 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
 import os
+import requests
 import time
+import shutil
 
-# Get paths figured out
+def download_image(url, dest_path):
+    r = requests.get(url, stream=True)
+    r.raw.decode_content = True
+    with open(dest_path, "wb") as dl_file:
+        shutil.copyfileobj(r.raw, dl_file)
+    # Get paths figured out
+
 script_directory = os.path.dirname(os.path.abspath(__file__))
 
 # Set parameters
@@ -38,14 +46,41 @@ tButton_text_color = "#9BBBBB"
 tButton_color = "#000000"
 tButton_image_path = "/test/test_button_image.png"
 tButton_link = "https://google.com"
+tFavicon_image_path = "/test/test_favicon.ico"
+
+###
+# Test Changing Favicon
+### 
+
+# Download the original favicon and prep the page
+web.get(editpage)
+download_image(homepage + "/favicon", os.path.join(script_directory, "original_favicon.ico"))
+# Upload the favicon
+web.find_element(By.ID, "favicon").send_keys(tFavicon_image_path)
+web.find_element(By.ID, "submit_favicon").click()
+# Wait for alert, confirm we're successful
+alert = WebDriverWait(web, 10).until(EC.alert_is_present())
+assert "Changed" in alert.text
+alert.accept()
+web.get(homepage)
+download_image(homepage + "/favicon", os.path.join(script_directory, "uploaded_favicon.ico"))
+# Read in bytes of all files, and confirm it behaved as expected.
+with open(tFavicon_image_path, "rb") as test_favicon:
+    with open(os.path.join(script_directory, "original_favicon.ico"), "rb") as original_favicon:
+        with open(os.path.join(script_directory, "uploaded_favicon.ico"), "rb") as uploaded_favicon:
+            original_bytes = original_favicon.read()
+            uploaded_bytes = uploaded_favicon.read()
+            test_bytes = test_favicon.read()
+            assert test_bytes == uploaded_bytes
+            assert test_bytes != original_bytes
+            assert original_bytes != uploaded_bytes
 
 #
 # Test adding buttons
 #
-
-# Wait until the submitButton is present
-myElem = WebDriverWait(web, 10).until(EC.presence_of_element_located((By.ID, 'submitButton')))
+web.get(editpage)
 # Submit the button
+
 web.find_element(By.ID, "buttonText").send_keys(tButton_text)
 web.find_element(By.ID, "text_color").send_keys(tButton_text_color)
 web.find_element(By.ID, "buttonColor").send_keys(tButton_color)
