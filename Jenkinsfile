@@ -39,7 +39,6 @@ pipeline {
                 sh '''
                 podman create \
                     -p 3001:3000 \
-                    -v splash-demo_userdata:/var/node/user_data \
                     --name splash-demo \
                     splash-demo
                 '''
