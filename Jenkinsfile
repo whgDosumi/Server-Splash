@@ -72,13 +72,37 @@ pipeline {
                         withCredentials([string(credentialsId: "Jenkins-Github-PAT", variable: "PAT")]) {
                             def response = sh(script: "curl -s -H \"Authorization: token ${PAT}\" https://api.github.com/repos/whgDosumi/Server-Splash/pulls/${env.CHANGE_ID}", returnStdout: true).trim()
                             def pr = readJSON text: response
-                            def prTitle = pr.title
-                            echo "PR Title: ${prTitle}"
+                            def prTitle = pr.title.toLowerCase()
+                            echo "PR Title: ${pr.title}"
+                            // Check for the pr type
+                            if (prTitle.contains("[major]")) {
+                                sh "./bump_version.sh major"
+                            } else if (prTitle.contains("[minor]")) {
+                                sh "./bump_version.sh minor"
+                            } else if (prTitle.contains("[patch]")) {
+                                sh "./bump_version.sh patch"
+                            } else {
+                                error("Invalid PR title. Expected [major], [minor], or [patch] in the title")
+                            }
                         }
                     } else {
                         echo "Skipping, this is not a PR"
                     }
                 }
+            }
+        }
+        stage ("Commit Version Bump") {
+            steps {
+                // Set git configs
+                echo "Committing version changes to repo"
+                sh "git config user.name \"Jenkins\""
+                sh "git config user.email \"lewis.dom21@gmail.com\""
+                // Stage changes
+                sh "git add version.txt"
+                // Commit
+                sh "git commit -m \"Bump Version\""
+                // Push changes
+                sh "git push"
             }
         }
     }
