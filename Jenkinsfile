@@ -69,7 +69,7 @@ pipeline {
                 script {
                     if (env.CHANGE_ID) {
                         // Use GitHub API to get PR details
-                        withCredentials([string(credentialsId: "Jenkins-Github-PAT-UN", variable: "PAT")]) {
+                        withCredentials([string(credentialsId: "Jenkins-Github-PAT", variable: "PAT")]) {
                             def response = sh(script: "curl -s -H \"Authorization: token ${PAT} https://api.github.com/repos/whgDosumi/Server-Splash/pulls/${env.CHANGE_ID}", returnStdout: true).trim()
                         }
                         def pr = readJSON text: response
