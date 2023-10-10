@@ -74,6 +74,8 @@ pipeline {
                             def pr = readJSON text: response
                             def prTitle = pr.title.toLowerCase()
                             echo "PR Title: ${pr.title}"
+                            // Add execute permissions to bump_version script
+                            sh "chmod +x bump_version.sh"
                             // Check for the pr type
                             if (prTitle.contains("[major]")) {
                                 sh "./bump_version.sh major"
