@@ -2,6 +2,7 @@ pipeline {
     agent any
     parameters {
         booleanParam(defaultValue: true, description: 'Skip manual review?', name: 'SKIP_REVIEW')
+        booleanParam(defaultValue: false, description: "Force Version Bump", name: "FORCE_VERSION_BUMP")
     }
     stages {
         stage ("Initialization") {
@@ -71,10 +72,13 @@ pipeline {
                         // Use GitHub API to get PR details
                         withCredentials([string(credentialsId: "Jenkins-Github-PAT", variable: "PAT")]) {
                             def last_commit_author = sh(script: 'git log -1 --pretty=%an', returnStdout: true).trim()
-                            if (last_commit_author == "Jenkins-Version-Bumper") {
-                                echo "Version already bumped by Jenkins for this PR, skipping."
-                                return
+                            if (!params.FORCE_VERSION_BUMP) {
+                                if (last_commit_author == "Jenkins-Version-Bumper") {
+                                    echo "Version already bumped by Jenkins for this PR, skipping."
+                                    return
+                                }
                             }
+                            
                             def response = sh(script: "curl -s -H \"Authorization: token ${PAT}\" https://api.github.com/repos/whgDosumi/Server-Splash/pulls/${env.CHANGE_ID}", returnStdout: true).trim()
                             def pr = readJSON text: response
                             def branch_name = pr.head.ref
