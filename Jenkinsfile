@@ -92,16 +92,20 @@ pipeline {
                             } else {
                                 error("Invalid PR title: '${pr.title}'. Expected [major], [minor], or [patch] in the title")
                             }
-                            // Set git configs
-                            echo "Committing version changes to repo"
-                            sh "git config user.name \"Jenkins-Version-Bumper\""
-                            sh "git config user.email \"lewis.dom21@gmail.com\""
-                            // Stage changes
-                            sh "git add version.txt"
-                            // Commit
-                            sh "git commit -m \"Bump Version\""
-                            // Push changes
-                            sh "git push origin HEAD:${branch_name}"
+                            withCredentials([usernamePassword(credentialsId: 'Jenkins-Github-PAT-UN', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                                // Set url
+                                sh "git remote set-url origin https://$GIT_USERNAME:$GIT_PASSWORD@github.com/whgDosumi/Server-Splash.git"
+                                // Set git configs
+                                echo "Committing version changes to repo"
+                                sh "git config user.name \"Jenkins-Version-Bumper\""
+                                sh "git config user.email \"lewis.dom21@gmail.com\""
+                                // Stage changes
+                                sh "git add version.txt"
+                                // Commit
+                                sh "git commit -m \"Bump Version\""
+                                // Push changes
+                                sh "git push origin HEAD:${branch_name}"
+                            }
                         }
                     } else {
                         echo "Skipping, this is not a PR"
