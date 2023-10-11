@@ -70,22 +70,38 @@ pipeline {
                     if (env.CHANGE_ID) {
                         // Use GitHub API to get PR details
                         withCredentials([string(credentialsId: "Jenkins-Github-PAT", variable: "PAT")]) {
+                            def last_commit_author = sh(script: 'git log -1 --pretty=%an', returnStdout: true).trim()
+                            if (last_commit_author == "Jenkins-Version-Bumper") {
+                                echo "Version already bumped by Jenkins for this PR, skipping."
+                                return
+                            }
                             def response = sh(script: "curl -s -H \"Authorization: token ${PAT}\" https://api.github.com/repos/whgDosumi/Server-Splash/pulls/${env.CHANGE_ID}", returnStdout: true).trim()
                             def pr = readJSON text: response
-                            def prTitle = pr.title.toLowerCase()
+                            def branch_name = pr.head.ref
+                            def pr_title = pr.title.toLowerCase()
                             echo "PR Title: ${pr.title}"
                             // Add execute permissions to bump_version script
                             sh "chmod +x bump_version.sh"
                             // Check for the pr type
-                            if (prTitle.contains("[major]")) {
+                            if (pr_title.contains("[major]")) {
                                 sh "./bump_version.sh major"
-                            } else if (prTitle.contains("[minor]")) {
+                            } else if (pr_title.contains("[minor]")) {
                                 sh "./bump_version.sh minor"
-                            } else if (prTitle.contains("[patch]")) {
+                            } else if (pr_title.contains("[patch]")) {
                                 sh "./bump_version.sh patch"
                             } else {
-                                error("Invalid PR title. Expected [major], [minor], or [patch] in the title")
+                                error("Invalid PR title: '${pr.title}'. Expected [major], [minor], or [patch] in the title")
                             }
+                            // Set git configs
+                            echo "Committing version changes to repo"
+                            sh "git config user.name \"Jenkins-Version-Bumper\""
+                            sh "git config user.email \"lewis.dom21@gmail.com\""
+                            // Stage changes
+                            sh "git add version.txt"
+                            // Commit
+                            sh "git commit -m \"Bump Version\""
+                            // Push changes
+                            sh "git push origin HEAD:${branch_name}"
                         }
                     } else {
                         echo "Skipping, this is not a PR"
@@ -93,21 +109,6 @@ pipeline {
                 }
             }
         }
-        stage ("Commit Version Bump") {
-            steps {
-                // Set git configs
-                echo "Committing version changes to repo"
-                sh "git config user.name \"Jenkins\""
-                sh "git config user.email \"lewis.dom21@gmail.com\""
-                // Stage changes
-                sh "git add version.txt"
-                // Commit
-                sh "git commit -m \"Bump Version\""
-                // Push changes
-                sh "git push"
-            }
-        }
-    }
     post {
         success {
             script {
