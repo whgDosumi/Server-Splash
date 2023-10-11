@@ -2,6 +2,7 @@ pipeline {
     agent any
     parameters {
         booleanParam(defaultValue: true, description: 'Skip manual review?', name: 'SKIP_REVIEW')
+        booleanParam(defaultValue: false, description: "Force Version Bump", name: "FORCE_VERSION_BUMP")
     }
     stages {
         stage ("Initialization") {
@@ -62,6 +63,58 @@ pipeline {
             }
             steps {
                 input(id: 'userInput', message: 'Is the build okay?')
+            }
+        }
+        stage ("Change Version") {
+            steps {
+                script {
+                    if (env.CHANGE_ID) {
+                        // Use GitHub API to get PR details
+                        withCredentials([string(credentialsId: "Jenkins-Github-PAT", variable: "PAT")]) {
+                            def last_commit_author = sh(script: 'git log -1 --pretty=%an', returnStdout: true).trim()
+                            if (!params.FORCE_VERSION_BUMP) {
+                                if (last_commit_author == "Jenkins-Version-Bumper") {
+                                    echo "Version already bumped by Jenkins for this PR, skipping."
+                                    return
+                                }
+                            }
+                            
+                            def response = sh(script: "curl -s -H \"Authorization: token ${PAT}\" https://api.github.com/repos/whgDosumi/Server-Splash/pulls/${env.CHANGE_ID}", returnStdout: true).trim()
+                            def pr = readJSON text: response
+                            def branch_name = pr.head.ref
+                            def pr_title = pr.title.toLowerCase()
+                            echo "PR Title: ${pr.title}"
+                            // Add execute permissions to bump_version script
+                            sh "chmod +x bump_version.sh"
+                            // Check for the pr type
+                            if (pr_title.contains("[major]")) {
+                                sh "./bump_version.sh major"
+                            } else if (pr_title.contains("[minor]")) {
+                                sh "./bump_version.sh minor"
+                            } else if (pr_title.contains("[patch]")) {
+                                sh "./bump_version.sh patch"
+                            } else {
+                                error("Invalid PR title: '${pr.title}'. Expected [major], [minor], or [patch] in the title")
+                            }
+                            withCredentials([usernamePassword(credentialsId: 'Jenkins-Github-PAT-UN', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                                // Set url
+                                sh "git remote set-url origin https://$GIT_USERNAME:$GIT_PASSWORD@github.com/whgDosumi/Server-Splash.git"
+                                // Set git configs
+                                echo "Committing version changes to repo"
+                                sh "git config user.name \"Jenkins-Version-Bumper\""
+                                sh "git config user.email \"lewis.dom21@gmail.com\""
+                                // Stage changes
+                                sh "git add version.txt"
+                                // Commit
+                                sh "git commit -m \"Bump Version\""
+                                // Push changes
+                                sh "git push origin HEAD:${branch_name}"
+                            }
+                        }
+                    } else {
+                        echo "Skipping, this is not a PR"
+                    }
+                }
             }
         }
     }
