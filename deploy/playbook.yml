@@ -1,0 +1,69 @@
+--- # Deploy Server-Splash to hosts
+- name: Deploy Server-Splash
+  hosts: all
+  become: yes
+  remote_user: ansible
+  tasks:
+  - name: Install Prerequisite Applications
+    dnf:
+      name: ' {{ item }}'
+      state: latest
+    with_items:
+      - podman
+      - python-firewall
+      - firewalld
+  - name: Poll Remote Machine for Current Version
+    slurp:
+      src: /root/Server-Splash/version.txt
+    register: remote_version_content
+    ignore_errors: yes
+  - name: Decode Version Information
+    set_fact:
+      remote_version: "{{ remote_version_content.content | b64decode | trim }}"
+    when: remote_version_content is defined and 'content' in remote_version_content
+  - name: Define Remote Version when None is Present
+    set_fact:
+      remote_version: "astro"
+    when: remote_version_content is failed
+  - name: Get Current Version from Local Codebase
+    local_action: command cat "{{ playbook_dir }}/../version.txt"
+    register: new_version
+    become: no
+  - name: Compare Versions
+    set_fact:
+      update_needed: "{{ new_version.stdout != remote_version }}"
+  - block:
+    - name: Copy New Code to Host
+      synchronize:
+        src: "{{ playbook_dir }}/.."
+        dest: /root/Server-Splash
+        delete: yes
+        recursive: yes
+    - name: Stop Existing Container
+      shell:
+        cmd: "podman container stop -t 0 splash"
+      ignore_errors: yes
+    - name: Remove Existing Container
+      shell:
+        cmd: "podman container rm splash"
+      ignore_errors: yes
+    - name: Build
+      shell:
+        cmd: "podman build -t server-splash /root/Server-Splash"
+    - name: Create New Container
+      shell: |
+        podman create \
+          -p 3000:3000 \
+          -v splash_userdata:/var/node/user_data \
+          --name splash \
+          server-splash
+    - name: Update Unit File
+      shell:
+        cmd: "podman generate systemd splash > /etc/systemd/system/splash.service"
+    - name: Enable Service
+      systemd_service:
+        daemon_reload: true
+        name: splash
+        enabled: true
+        state: started
+    when: update_needed
