@@ -27,7 +27,7 @@ function get_server_title() {
     if (fs.existsSync("/var/node/user_data/title.txt")) {
         return fs.readFileSync("/var/node/user_data/title.txt", "utf8");
     } else {
-        return "Server Title"
+        return "Asshole"
     }
 }
 let server_title = get_server_title();
