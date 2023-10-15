@@ -40,8 +40,10 @@
         delete: yes
         recursive: yes
     - name: Stop Existing Container
-      shell:
-        cmd: "podman container stop -t 0 splash"
+      systemd_service:
+        name: splash
+        enabled: false
+        state: stopped
       ignore_errors: yes
     - name: Remove Existing Container
       shell:
