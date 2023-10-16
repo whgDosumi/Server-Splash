@@ -12,6 +12,8 @@
       - podman
       - python-firewall
       - firewalld
+      - rsync
+    ignore_errors: yes
   - name: Poll Remote Machine for Current Version
     slurp:
       src: /root/Server-Splash/version.txt
