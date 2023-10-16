@@ -37,7 +37,7 @@ pipeline {
                 sh "podman --storage-opt ignore_chown_errors=true build -t splash-demo ."
             }
         }
-        stage ("Deploy") {
+        stage ("Construct Container") {
             steps {
                 echo "Constructing Container"
                 sh '''
