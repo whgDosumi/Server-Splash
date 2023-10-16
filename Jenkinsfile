@@ -6,7 +6,7 @@ pipeline {
         throttleEnabled: true,
         throttleOption: 'category'
         )
-        buildDiscarder(logRotator(numToKeepStr: '3', daysToKeepStr: '7'))
+        buildDiscarder(logRotator(numToKeepStr: '3'))
     }
     parameters {
         booleanParam(defaultValue: true, description: 'Skip manual review?', name: 'SKIP_REVIEW')
