@@ -25,9 +25,9 @@ pipeline {
                         commitAuthor == "Jenkins-Version-Bumper"
                     }
                     if (isVersionBumped) {
-                        echo "Version already bumped in this PR"
+                        echo "Version already bumped by Jenkins"
                     } else {
-                        echo "Version hasn't been bumped yet in the PR"
+                        echo "Version hasn't been bumped by Jenkins yet"
                     }
                     def last_commit_author = sh(script: 'git log -1 --pretty=%an', returnStdout: true).trim()
                     env.VERSION_BUMPED = isVersionBumped.toString()
