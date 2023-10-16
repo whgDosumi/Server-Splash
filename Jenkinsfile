@@ -1,5 +1,12 @@
 pipeline {
     agent any
+    options {
+        throttleJobProperty(
+        categories: ['Server-Splash'],
+        throttleEnabled: true,
+        throttleOption: 'category'
+        )
+    }
     parameters {
         booleanParam(defaultValue: true, description: 'Skip manual review?', name: 'SKIP_REVIEW')
         booleanParam(defaultValue: false, description: "Force Version Bump", name: "FORCE_VERSION_BUMP")
@@ -8,9 +15,16 @@ pipeline {
         stage ("Initialization") {
             steps {
                 script {
+                    def commitsAheadOfMaster = sh(script: 'git log --pretty="%an" origin/master..HEAD', returnStdout: true).trim().split("\n")
+                    def isVersionBumped = commitsAheadOfMaster.any { commitAuthor ->
+                        commitAuthor == "Jenkins-Version-Bumper"
+                    }
+                    env.VERSION_BUMPED = isVersionBumped.toString()
                     def skip_manual = params.SKIP_REVIEW
                     if (env.JOB_NAME.contains('PR Builder')) {
-                        skip_manual = false
+                        if (env.VERSION_BUMPED == "false") {
+                            skip_manual = false
+                        }
                     }
                     env.skip_manual_dynamic = skip_manual
                 }
@@ -34,7 +48,7 @@ pipeline {
                 sh "podman --storage-opt ignore_chown_errors=true build -t splash-demo ."
             }
         }
-        stage ("Deploy") {
+        stage ("Construct Container") {
             steps {
                 echo "Constructing Container"
                 sh '''
@@ -71,14 +85,10 @@ pipeline {
                     if (env.CHANGE_ID) {
                         // Use GitHub API to get PR details
                         withCredentials([string(credentialsId: "Jenkins-Github-PAT", variable: "PAT")]) {
-                            def last_commit_author = sh(script: 'git log -1 --pretty=%an', returnStdout: true).trim()
-                            if (!params.FORCE_VERSION_BUMP) {
-                                if (last_commit_author == "Jenkins-Version-Bumper") {
-                                    echo "Version already bumped by Jenkins for this PR, skipping."
-                                    return
-                                }
+                            if (env.VERSION_BUMPED == "true") {
+                                echo "Version already bumped by Jenkins for this PR, skipping."
+                                return
                             }
-                            
                             def response = sh(script: "curl -s -H \"Authorization: token ${PAT}\" https://api.github.com/repos/whgDosumi/Server-Splash/pulls/${env.CHANGE_ID}", returnStdout: true).trim()
                             def pr = readJSON text: response
                             def branch_name = pr.head.ref
@@ -139,4 +149,3 @@ pipeline {
         }
     }
 }
-
