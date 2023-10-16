@@ -16,7 +16,7 @@ pipeline {
             steps {
                 script {
                     sh "git fetch origin master:temp_master"
-                    def commitsAheadOfMaster = sh(script: 'git log --pretty="%an" origin/temp_master..HEAD', returnStdout: true).trim().split("\n")
+                    def commitsAheadOfMaster = sh(script: 'git log --pretty="%an" temp_master..HEAD', returnStdout: true).trim().split("\n")
                     def isVersionBumped = commitsAheadOfMaster.any { commitAuthor ->
                         commitAuthor == "Jenkins-Version-Bumper"
                     }
