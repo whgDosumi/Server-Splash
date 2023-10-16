@@ -89,8 +89,10 @@ pipeline {
                 }
             }
             steps {
-                currentBuild.description = '<a href="http://onion.lan:3001">Live Demo</a>'
-                input(id: 'userInput', message: 'Is the build okay?')
+                script {
+                    currentBuild.description = '<a href="http://onion.lan:3001">Live Demo</a>'
+                    input(id: 'userInput', message: 'Is the build okay?')
+                }
             }
         }
         stage ("Change Version") { // Bumps the version.txt file if applicable.
