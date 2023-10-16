@@ -85,6 +85,9 @@ pipeline {
                         env.TEST_RESULT = "Success"
                     } else {
                         env.TEST_RESULT = "Failure"
+                        if (env.skip_manual_dynamic == "true") {
+                            throw result
+                        }
                     }
                 }
             }
