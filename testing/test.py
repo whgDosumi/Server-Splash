@@ -9,8 +9,6 @@ import requests
 import time
 import shutil
 
-exit(1)
-
 def download_image(url, dest_path):
     r = requests.get(url, stream=True)
     r.raw.decode_content = True
