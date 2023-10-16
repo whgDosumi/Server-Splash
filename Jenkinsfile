@@ -90,7 +90,12 @@ pipeline {
             }
             steps {
                 script {
-                    currentBuild.description = '<a href="http://onion.lan:3001">Live Demo</a>'
+                    def buildURL = "http://onion.lan/job/${env.JOB_NAME}/${env.BUILD_NUMBER}/"
+                    def message = "Build requires manual approval\n[Jenkins PR](${buildURL})\n[Live Demo](http://onion.lan:3001)"
+                    def chatId = "222789278"
+                    withCredentials([string(credentialsId: 'onion-telegram-token', variable: 'TOKEN')]) {
+                        sh "curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage -d chat_id=${chatId} -d text='${message}'"
+                    }
                     input(id: 'userInput', message: 'Is the build okay?')
                 }
             }
