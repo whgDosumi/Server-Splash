@@ -94,7 +94,7 @@ pipeline {
                     def message = "Build requires manual approval\n[Jenkins PR](${buildURL})\n[Live Demo](http://onion.lan:3001)"
                     def chatId = "222789278"
                     withCredentials([string(credentialsId: 'onion-telegram-token', variable: 'TOKEN')]) {
-                        sh "curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage -d chat_id=${chatId} -d text='${message}'"
+                        sh "curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage -d chat_id=${chatId} -d text='${message}' -d parse_mode=Markdown"
                     }
                     input(id: 'userInput', message: 'Is the build okay?')
                 }
