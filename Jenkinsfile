@@ -77,16 +77,14 @@ pipeline {
         stage ("Test") { // Spawns the test container which will test the previously spawned live container
             steps {
                 script{
-                    def result = catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    try {
                         sh "podman --storage-opt ignore_chown_errors=true build -t splash-test ./testing/."
                         sh "podman run --network=\"host\" splash-test"
-                    }
-                    if (result == null) {
                         env.TEST_RESULT = "Success"
-                    } else {
+                    } catch (Exception e) {
                         env.TEST_RESULT = "Failure"
-                        if (env.skip_manual_dynamic == "true") {
-                            error("Test stage failed")
+                        catchError(buildResult: "SUCCESS", stageResult: "FAILURE") {
+                            sh "exit 1"
                         }
                     }
                 }
