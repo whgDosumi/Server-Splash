@@ -86,7 +86,7 @@ pipeline {
                     } else {
                         env.TEST_RESULT = "Failure"
                         if (env.skip_manual_dynamic == "true") {
-                            throw result
+                            error("Test stage failed")
                         }
                     }
                 }
@@ -112,7 +112,7 @@ pipeline {
                         input(id: 'userInput', message: 'Is the build okay?')
                     } else {
                         input(id: "userInput", message: 'There were failures in the testing stage, please review the live environment')
-                        throw "Automatic Tests Failed"
+                        error("Test stage failed")
                     }                    
                 }
             }
