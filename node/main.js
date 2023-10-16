@@ -8,6 +8,8 @@ const upload = multer({ dest: path.join(__dirname, "/uploads") });
 // Specify the server port
 const server_port = 3000;
 
+const VERSION = fs.readFileSync(path.join(__dirname, 'public', 'version.txt'), 'utf-8').trim();
+
 // Define static content like images and stylesheets
 app.use(express.static(path.join(__dirname, "/public")));
 // Set our view engine to ejs, and configure where views are located
@@ -51,10 +53,10 @@ let buttons = load_buttons();
 
 // Handle GET requests
 app.get("/", (req, res) => {
-    res.render("index", { buttons, server_title });
+    res.render("index", { buttons, server_title, VERSION });
 });
 app.get("/edit", (req, res) => {
-    res.render("edit", { buttons, server_title });
+    res.render("edit", { buttons, server_title, VERSION });
 });
 app.get("/favicon", (req, res) => {
     if (fs.existsSync(path.join(__dirname, "user_data", "favicon.ico"))) {
