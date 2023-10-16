@@ -1,7 +1,11 @@
 pipeline {
     agent any
     options {
-        throttle(['Server-Splash'])
+        throttleJobProperty(
+        categories: ['Server-Splash'],
+        throttleEnabled: true,
+        throttleOption: 'category'
+        )
     }
     parameters {
         booleanParam(defaultValue: true, description: 'Skip manual review?', name: 'SKIP_REVIEW')
