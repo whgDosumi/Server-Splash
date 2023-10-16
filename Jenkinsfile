@@ -86,10 +86,8 @@ pipeline {
                         // Use GitHub API to get PR details
                         withCredentials([string(credentialsId: "Jenkins-Github-PAT", variable: "PAT")]) {
                             if (env.VERSION_BUMPED == "true") {
-                                if (isVersionBumped) {
-                                    echo "Version already bumped by Jenkins for this PR, skipping."
-                                    return
-                                }
+                                echo "Version already bumped by Jenkins for this PR, skipping."
+                                return
                             }
                             def response = sh(script: "curl -s -H \"Authorization: token ${PAT}\" https://api.github.com/repos/whgDosumi/Server-Splash/pulls/${env.CHANGE_ID}", returnStdout: true).trim()
                             def pr = readJSON text: response
