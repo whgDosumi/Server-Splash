@@ -15,9 +15,16 @@ pipeline {
         stage ("Initialization") {
             steps {
                 script {
+                    def commitsAheadOfMaster = sh(script: 'git log --pretty="%an" master..HEAD', returnStdout: true).trim().split("\n")
+                    def isVersionBumped = commitsAheadOfMaster.any { commitAuthor ->
+                        commitAuthor == "Jenkins-Version-Bumper"
+                    }
+                    env.VERSION_BUMPED = isVersionBumped.toString()
                     def skip_manual = params.SKIP_REVIEW
                     if (env.JOB_NAME.contains('PR Builder')) {
-                        skip_manual = false
+                        if (env.VERSION_BUMPED == "false") {
+                            skip_manual = false
+                        }
                     }
                     env.skip_manual_dynamic = skip_manual
                 }
@@ -78,14 +85,12 @@ pipeline {
                     if (env.CHANGE_ID) {
                         // Use GitHub API to get PR details
                         withCredentials([string(credentialsId: "Jenkins-Github-PAT", variable: "PAT")]) {
-                            def last_commit_author = sh(script: 'git log -1 --pretty=%an', returnStdout: true).trim()
-                            if (!params.FORCE_VERSION_BUMP) {
-                                if (last_commit_author == "Jenkins-Version-Bumper") {
+                            if (env.VERSION_BUMPED == "true") {
+                                if (isVersionBumped) {
                                     echo "Version already bumped by Jenkins for this PR, skipping."
                                     return
                                 }
                             }
-                            
                             def response = sh(script: "curl -s -H \"Authorization: token ${PAT}\" https://api.github.com/repos/whgDosumi/Server-Splash/pulls/${env.CHANGE_ID}", returnStdout: true).trim()
                             def pr = readJSON text: response
                             def branch_name = pr.head.ref
