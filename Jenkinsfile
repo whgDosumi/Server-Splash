@@ -83,6 +83,9 @@ pipeline {
                         env.TEST_RESULT = "Success"
                     } catch (Exception e) {
                         env.TEST_RESULT = "Failure"
+                        if (env.skip_manual_dynamic == "true") {
+                            error(e)
+                        }
                         catchError(buildResult: "SUCCESS", stageResult: "FAILURE") {
                             sh "exit 1"
                         }
