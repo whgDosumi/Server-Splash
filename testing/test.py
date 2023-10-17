@@ -148,4 +148,14 @@ alert = WebDriverWait(web, 10).until(EC.alert_is_present())
 assert alert.text == "Title Changed!"
 alert.accept()
 
+###
+# Test Version is Present
+###
+
+with open("/test/version.txt", "r") as version_file:
+    version = version_file.read().strip()
+web.get(homepage)
+assert version in web.find_element(By.TAG_NAME, "body").get_attribute("innerHTML")
+web.get(editpage)
+assert version in web.find_element(By.TAG_NAME, "body").get_attribute("innerHTML")
 print("All automated tests have passed.")

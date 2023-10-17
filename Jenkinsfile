@@ -78,6 +78,7 @@ pipeline {
             steps {
                 script{
                     try {
+                        sh "cp ./version.txt ./testing/version.txt"
                         sh "podman --storage-opt ignore_chown_errors=true build -t splash-test ./testing/."
                         sh "podman run --network=\"host\" splash-test"
                         env.TEST_RESULT = "Success"
