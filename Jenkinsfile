@@ -76,9 +76,21 @@ pipeline {
         }
         stage ("Test") { // Spawns the test container which will test the previously spawned live container
             steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh "podman --storage-opt ignore_chown_errors=true build -t splash-test ./testing/."
-                    sh "podman run --network=\"host\" splash-test"
+                script{
+                    try {
+                        sh "cp ./version.txt ./testing/version.txt"
+                        sh "podman --storage-opt ignore_chown_errors=true build -t splash-test ./testing/."
+                        sh "podman run --network=\"host\" splash-test"
+                        env.TEST_RESULT = "Success"
+                    } catch (Exception e) {
+                        env.TEST_RESULT = "Failure"
+                        if (env.skip_manual_dynamic == "true") {
+                            error(e)
+                        }
+                        catchError(buildResult: "SUCCESS", stageResult: "FAILURE") {
+                            sh "exit 1"
+                        }
+                    }
                 }
             }
         }
@@ -93,12 +105,17 @@ pipeline {
                     def baseJenkinsUrl = env.JENKINS_URL
                     def jobNamePath = env.JOB_NAME.replaceAll("/", "/job/")
                     def jobUrl = "${baseJenkinsUrl}job/${jobNamePath}/"
-                    def message = "Build requires manual approval\n[Jenkins Job](${jobUrl})\n[Live Demo](http://onion.lan:3001)"
+                    def message = "Build requires manual review\n[Jenkins Job](${jobUrl})\n[Live Demo](http://onion.lan:3001)"
                     def chatId = "222789278"
                     withCredentials([string(credentialsId: 'onion-telegram-token', variable: 'TOKEN')]) {
                         sh "curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage -d chat_id=${chatId} -d text='${message}' -d parse_mode=Markdown"
                     }
-                    input(id: 'userInput', message: 'Is the build okay?')
+                    if (env.TEST_RESULT == "Success") {
+                        input(id: 'userInput', message: 'Is the build okay?')
+                    } else {
+                        input(id: "userInput", message: 'There were failures in the testing stage, please review the live environment')
+                        error("Test stage failed")
+                    }                    
                 }
             }
         }
