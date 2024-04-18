@@ -1,4 +1,11 @@
-@import url(https://db.onlinewebfonts.com/c/9027abcf80a0095c71d4ebc4aa4de4b1?family=Century+Gothic+W05+Regular);
+@font-face {
+    font-family: "Century Gothic W05 Regular";
+    src: url("fonts/Century_Gothic_W05_Regular.woff2") format("woff2"),
+        url("fonts/Century_Gothic_W05_Regular.woff") format("woff"),
+        url("fonts/Century_Gothic_W05_Regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
 
 .button {
     width: 500px;

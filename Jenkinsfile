@@ -123,7 +123,7 @@ pipeline {
             steps {
                 script {
                     if (env.CHANGE_ID) { // If this is a PR
-                        withCredentials([string(credentialsId: "Jenkins-Github-PAT", variable: "PAT")]) { // For getting PR details later
+                        withCredentials([usernamePassword(credentialsId: 'Jenkins-Github-PAT-UN', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) { // For getting PR details later
                             // Bypass version bumping if applicable
                             if (env.VERSION_BUMPED == "true") {
                                 if (env.FORCE_VERSION_BUMP == "false") {
@@ -134,7 +134,7 @@ pipeline {
                                 }
                             }
                             // Get PR details
-                            def response = sh(script: "curl -s -H \"Authorization: token ${PAT}\" https://api.github.com/repos/whgDosumi/Server-Splash/pulls/${env.CHANGE_ID}", returnStdout: true).trim()
+                            def response = sh(script: "curl -s -H \"Authorization: token $GIT_PASSWORD\" https://api.github.com/repos/whgDosumi/Server-Splash/pulls/${env.CHANGE_ID}", returnStdout: true).trim()
                             def pr = readJSON text: response
                             def branch_name = pr.head.ref
                             def pr_title = pr.title.toLowerCase()
