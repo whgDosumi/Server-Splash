@@ -134,7 +134,7 @@ pipeline {
                                 }
                             }
                             // Get PR details
-                            def response = sh(script: "curl -s -H \"Authorization: token $PAT\" https://api.github.com/repos/whgDosumi/Server-Splash/pulls/${env.CHANGE_ID}", returnStdout: true).trim()
+                            def response = sh(script: "curl -s -H \"Authorization: token ${env.PAT}\" https://api.github.com/repos/whgDosumi/Server-Splash/pulls/${env.CHANGE_ID}", returnStdout: true).trim()
                             def pr = readJSON text: response
                             def branch_name = pr.head.ref
                             def pr_title = pr.title.toLowerCase()
