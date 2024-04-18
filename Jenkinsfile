@@ -123,7 +123,7 @@ pipeline {
             steps {
                 script {
                     if (env.CHANGE_ID) { // If this is a PR
-                        withCredentials([string(credentialsId: "Jenkins-Github-PAT", variable: "PAT")]) { // For getting PR details later
+                        withCredentials([string(credentialsId: "Jenkins-Github-PAT-UN", variable: "PAT")]) { // For getting PR details later
                             // Bypass version bumping if applicable
                             if (env.VERSION_BUMPED == "true") {
                                 if (env.FORCE_VERSION_BUMP == "false") {
